@@ -68,7 +68,7 @@
 					extensions: ["mp4", "ogv"],
 					handlers: {
 						ended: function(evt) {
-							queue.seekTo(offsetSeconds);
+							// queue.seekTo(offsetSeconds);
 						},
 						buffered: function(evt) {
 							queue.prepareAtOffset(offsetSeconds);
@@ -157,7 +157,7 @@
 				});
 
 				window.queue = queue;
-				queue.start(0);
+				queue.play(0);
 			});
 
 
