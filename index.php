@@ -33,16 +33,17 @@
 
 	<script type="text/javascript">
 
-		function getOffsetSeconds() {
+		function getOffsetSeconds(startHour, endHour) {
 			var now = new Date();
-			var startHour = 17;
-			var endHour = 21;
+			// var startHour = 17;
+			// var endHour = 21;
 			var nowHour = now.getHours();
 			var offsetHours = nowHour - startHour;
 			return (offsetHours * 60 * 60) + now.getMinutes() * 60 + now.getSeconds();
 		}
 
-		var offsetSeconds = getOffsetSeconds();
+		var offsetSeconds = getOffsetSeconds(15, 19);
+		offsetSeconds += 5 + 70; // Add intro duration
 
 	 	console.log(offsetSeconds);
 
@@ -54,10 +55,19 @@
  					extensions: ["mp4", "webm", "ogv"],
  					attrs: {
  						// "loop": "true"
+ 					},
+ 					handlers: {
+ 						timeupdate: function(evt) {
+ 							// Skip after 5 seconds
+ 							if(evt.currentTarget.currentTime > 5.0)
+ 								evt.data.queue.play(evt.data.index+1);
+ 							// console.log(evt.currentTarget.currentTime);
+ 						}
  					}
  				},
  				audio: {
  					url: "audio/noise_1",
+ 					duration: "02:11",
  					extensions: ["mp3"]
  				}
  			},
@@ -68,10 +78,11 @@
 					extensions: ["mp4", "ogv"],
 					handlers: {
 						ended: function(evt) {
-							// queue.seekTo(offsetSeconds);
+							queue.seek(offsetSeconds);
+							console.log("OSRAM-intro ended");
 						},
 						buffered: function(evt) {
-							queue.prepareAtOffset(offsetSeconds);
+							// queue.prepareAtOffset(offsetSeconds);
 						}
 					}
 
@@ -142,6 +153,7 @@
 				},
 				audio :{
 					url: "audio/noise_2",
+					duration: "01:10",
 					extensions: ["mp3"]
 				}
 			},
@@ -157,6 +169,7 @@
 				});
 
 				window.queue = queue;
+				console.log(queue.getTotalDuration());
 				queue.play(0);
 			});
 
