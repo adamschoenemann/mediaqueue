@@ -42,7 +42,7 @@
 			return (offsetHours * 60 * 60) + now.getMinutes() * 60 + now.getSeconds();
 		}
 
-		var offsetSeconds = getOffsetSeconds(15, 19);
+		var offsetSeconds = getOffsetSeconds(8, 19);
 		offsetSeconds += 5 + 70; // Add intro duration
 
 	 	console.log(offsetSeconds);
@@ -51,7 +51,7 @@
  			{
  				video: {
  					url: "flimmer",
- 					duration: "00:10",
+ 					duration: "00:05", // actually 10 seconds, but we'll only need 5
  					extensions: ["mp4", "webm", "ogv"],
  					attrs: {
  						// "loop": "true"
@@ -82,7 +82,7 @@
 							console.log("OSRAM-intro ended");
 						},
 						buffered: function(evt) {
-							// queue.prepareAtOffset(offsetSeconds);
+							queue.prepareAt(offsetSeconds);
 						}
 					}
 
@@ -148,7 +148,9 @@
 				video: {
 					url: "flimmer",
 					duration: "00:30",
-					loop: true,
+					attrs: {
+						loop: true,
+					},
 					extensions: ["mp4", "webm", "ogv"]
 				},
 				audio :{
@@ -165,12 +167,30 @@
 				var queue = new MediaQueue(media, $("#mq-container"), {
 					media: {
 						baseUrl: "http://showbisse.dk/"
+					},
+					video: {
+						attrs: {
+							"class": "fill",
+							width: $(window).width(),
+							height: $(window).height()
+						},
+						handlers: {
+							created: function(evt) {
+								$(evt.currentTarget).on("contextmenu", function(){
+									return false; // disable context menu
+								});
+								// console.log("video created!");
+								// return false; // doesn't work
+							}
+						}
 					}
 				});
+
 
 				window.queue = queue;
 				console.log(queue.getTotalDuration());
 				queue.play(0);
+				$(window).trigger("resize");
 			});
 
 

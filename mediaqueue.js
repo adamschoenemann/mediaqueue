@@ -1,6 +1,3 @@
-// TODO:
-// Implement seekTo()
-// Implement short-circuiting videso, e.g. skipping to next after 5 seconds
 
 var MediaQueue = (function($) {
 
@@ -23,7 +20,7 @@ var MediaQueue = (function($) {
 			media: {
 				baseUrl: "",
 				progressThreshold: 0.7,
-				durationThreshold: 60,
+				durationThreshold: 10,
 				attrs: {},
 				handlers: {}
 			},
@@ -100,6 +97,10 @@ var MediaQueue = (function($) {
 		return elem;
 	}
 
+	MediaQueue.prototype.prepareAt = function(time) {
+		this.prepare(this.getAtSeconds(time).index);
+	}
+
 	MediaQueue.prototype.insertMedia = function(index) {
 		var container = this.container;
 		var elem;
@@ -114,7 +115,9 @@ var MediaQueue = (function($) {
 
 		if(!elem) {
 			elem = this.createMediaElem(index);
+			elem.trigger("willmount");
 			container.append(elem);
+			elem.trigger("didmount");
 		}
 
 		return elem;
@@ -162,7 +165,7 @@ var MediaQueue = (function($) {
 	MediaQueue.prototype.setupProgressEvent = function(elem, media) {
 		var self = this;
 		elem.on("progress", function(evt) {
-			if (this.duration - this.currentTime > media.durationThreshold)
+			if (this.duration - this.currentTime > media.durationThreshold) // minimum time remaining before preload can start
 				return;
 			var progress = this.getHighestProgress();
 			// console.log(progress, media.progressThreshold);
@@ -179,6 +182,10 @@ var MediaQueue = (function($) {
 			// 	" loaded above threshold of " + self.options.progressThreshold);
 
 		});
+	}
+
+	MediaQueue.prototype.setupCreatedEvent = function(elem) {
+
 	}
 
 	MediaQueue.prototype.createElem = function(index, media, type) {
@@ -199,6 +206,7 @@ var MediaQueue = (function($) {
 			media.handlers[evt.type](evt);
 		});
 		this.setupProgressEvent(elem, media);
+		elem.trigger("created");
 
 		return elem;
 	}
@@ -227,6 +235,8 @@ var MediaQueue = (function($) {
 	// ================================================================== //
 
 	MediaQueue.prototype.seek = function(time) {
+		if (time > this.getTotalDuration() || time < 0)
+			return false;
 		var index = this.getAtSeconds(time).index
 		var elem = this.play(index);
 		var mediaStart = this.sumDurations(0, index - 1);
@@ -239,6 +249,7 @@ var MediaQueue = (function($) {
 					child.currentTime = offset;
 				});
 		});
+		return true;
 	}
 
 	MediaQueue.prototype.getTotalDuration = function() {
