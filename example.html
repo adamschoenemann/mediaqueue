@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MediaQueue example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+	<script src="mediaqueue.js" type="text/javascript"></script>
+
+</head>
+<body>
+	<div id="mq-container"></div>
+
+
+
+	<script type="text/javascript">
+
+
+ 		var media = [
+ 			{
+ 				video: {
+ 					url: "some-video",
+ 					duration: "00:05", // actually 10 seconds, but we'll only need 5
+ 					extensions: ["mp4", "webm", "ogv"],
+ 					attrs: {
+ 						// "loop": "true"
+ 					},
+ 					handlers: {
+ 						timeupdate: function(evt) {
+ 							// Skip after 5 seconds
+ 							if(evt.currentTarget.currentTime > 5.0)
+ 								evt.data.queue.play(evt.data.index+1);
+ 							// console.log(evt.currentTarget.currentTime);
+ 						}
+ 					}
+ 				},
+ 				audio: {
+ 					url: "audio/some-audio",
+ 					duration: "02:11",
+ 					extensions: ["mp3"]
+ 				}
+ 			},
+			{
+				video: {
+					url: "some-intro-video",
+					duration: "01:10",
+					extensions: ["mp4", "ogv"],
+					handlers: {
+						ended: function(evt) {
+							queue.seek(200); // skip 200 seconds into the queue on ended
+							console.log("OSRAM-intro ended");
+						},
+						buffered: function(evt) {
+							queue.prepareAt(200); // prepare video at 200 seconds into the queue
+												  // when buffered
+						}
+					}
+
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-1",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-2",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-3",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-4",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-5",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-6",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-7",
+					duration: "30:00",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "queue-vid-8",
+					duration: "20:39",
+					extensions: ["mp4", "ogv"]
+				}
+			},
+			{
+				video: {
+					url: "outro",
+					duration: "00:30",
+					attrs: {
+						loop: true,
+					},
+					extensions: ["mp4", "webm", "ogv"]
+				},
+				audio :{
+					url: "outro-sound",
+					duration: "01:10",
+					extensions: ["mp3"]
+				}
+			},
+		];
+
+		(function($){
+			$(document).ready(function(){
+
+				var queue = new MediaQueue(media, $("#mq-container"), {
+					media: {
+						baseUrl: "http://localhost/media-dir"
+					},
+					video: {
+						attrs: {
+							"class": "fill",
+							width: $(window).width(),
+							height: $(window).height()
+						},
+						handlers: {
+							created: function(evt) {
+								$(evt.currentTarget).on("contextmenu", function(){
+									return false; // disable context menu
+								});
+								// console.log("video created!");
+							}
+						}
+					}
+				});
+
+				queue.play(0);
+			});
+
+
+		})(jQuery);
+
+
+
+	</script>
+</body>
+</html>
