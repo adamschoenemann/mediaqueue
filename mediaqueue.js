@@ -4,23 +4,12 @@ var MediaQueue = (function($) {
 	var mediaId = "mq-media-";
 
 	function MediaQueue(media, container, options) {
-		// var defaults = {
-		// 	progressThreshold: 0.8,
-		// 	durationThreshold: 60,
-		// 	onMediaCreated: null,
-		// 	onMediaEnded: function(elem, index, queue) {
-		// 		queue.showVideo(index + 1).elem[0].play();
-		// 	},
-		// 	onMediaBuffered: function(elem, index, queue) {
-		// 		queue.insertVideo(index + 1);
-		// 	}
-		// };
 
 		var defaults = {
 			media: {
 				baseUrl: "",
 				progressThreshold: 0.7,
-				durationThreshold: 10,
+				durationThreshold: 5,
 				attrs: {},
 				handlers: {}
 			},
@@ -28,7 +17,6 @@ var MediaQueue = (function($) {
 				attrs: {
 					width: "1280",
 					height: "720",
-					// autoplay: "",
 					preload: "auto",
 					autobuffer: ""
 				},
@@ -49,11 +37,11 @@ var MediaQueue = (function($) {
 			}
 		}
 		this.options = $.extend(true, {}, defaults, options);
-		this.media = media.map(this.processMedia.bind(this));
+		this.media = media.map(this._processMedia.bind(this));
 		this.container = container;
 	}
 
-	MediaQueue.prototype.processMedia = function(media) {
+	MediaQueue.prototype._processMedia = function(media) {
 
 		var self = this;
 		function process(m, defaults) {
@@ -114,7 +102,7 @@ var MediaQueue = (function($) {
 		}
 
 		if(!elem) {
-			elem = this.createMediaElem(index);
+			elem = this._createMediaElem(index);
 			elem.trigger("willmount");
 			container.append(elem);
 			elem.trigger("didmount");
@@ -162,7 +150,7 @@ var MediaQueue = (function($) {
 		});
 	}
 
-	MediaQueue.prototype.setupProgressEvent = function(elem, media) {
+	MediaQueue.prototype._setupProgressEvent = function(elem, media) {
 		var self = this;
 		elem.on("progress", function(evt) {
 			if (this.duration - this.currentTime > media.durationThreshold) // minimum time remaining before preload can start
@@ -184,11 +172,7 @@ var MediaQueue = (function($) {
 		});
 	}
 
-	MediaQueue.prototype.setupCreatedEvent = function(elem) {
-
-	}
-
-	MediaQueue.prototype.createElem = function(index, media, type) {
+	MediaQueue.prototype._createElem = function(index, media, type) {
 		var elem = $("<" + type + ">");
 		elem.attr(media.attrs);
 		elem.append(media.extensions.map(function(ext){
@@ -205,29 +189,29 @@ var MediaQueue = (function($) {
 			});
 			media.handlers[evt.type](evt);
 		});
-		this.setupProgressEvent(elem, media);
+		this._setupProgressEvent(elem, media);
 		elem.trigger("created");
 
 		return elem;
 	}
 
-	MediaQueue.prototype.createMediaElem = function(index) {
+	MediaQueue.prototype._createMediaElem = function(index) {
 		var media = this.media[index];
 		mediaElem = $("<div>").addClass("media-elem")
 							  .attr("id", mediaId + index);
 		if(media.video)
-			mediaElem.append(this.createVideoElem(index, media.video));
+			mediaElem.append(this._createVideoElem(index, media.video));
 		if(media.audio)
-			mediaElem.append(this.createAudioElem(index, media.audio));
+			mediaElem.append(this._createAudioElem(index, media.audio));
 		return mediaElem;
 	}
 
-	MediaQueue.prototype.createAudioElem = function(index, audio) {
-		return this.createElem(index, audio, "audio");
+	MediaQueue.prototype._createAudioElem = function(index, audio) {
+		return this._createElem(index, audio, "audio");
 	}
 
-	MediaQueue.prototype.createVideoElem = function(index, video) {
-		return this.createElem(index, video, "video");
+	MediaQueue.prototype._createVideoElem = function(index, video) {
+		return this._createElem(index, video, "video");
 	}
 
 	// ================================================================== //
