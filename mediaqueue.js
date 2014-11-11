@@ -1,8 +1,26 @@
+/**
+ * @file Contains all the source code for the MediaQueue
+ * @author Adam Schønemann
+ */
+
+/**
+ * An object describing a video object
+ * @typedef {Object} Media
+ * @property {string} url
+ */
 
 var MediaQueue = (function($) {
 
 	var mediaId = "mq-media-";
 
+	/**
+	 * MediaQueue constructor
+	 * @name MediaQueue
+	 * @constructor
+	 * @param {Media} media    An array of Media objects (see doc for description)
+	 * @param {jQuery} container A jQuery element to contain the media queue
+	 * @param {object} options   An array of option objects
+	 */
 	function MediaQueue(media, container, options) {
 
 		var defaults = {
@@ -79,16 +97,36 @@ var MediaQueue = (function($) {
 		return media;
 	}
 
+	/**
+	 * Inserts a hidden media element and starts buffering
+	 * @method prepare
+	 * @memberOf MediaQueue#
+	 * @param {uint} index The index of the media
+	 * @returns {jQuery} The inserted element
+	 */
 	MediaQueue.prototype.prepare = function(index) {
 		var elem = this.insertMedia(index);
 		elem.addClass("hidden");
 		return elem;
 	}
 
+	/**
+	 * Insert a hidden media element at time (in seconds)
+	 * @method prepareAt
+	 * @memberOf MediaQueue#
+	 * @param  {uint} time The time offset into the queue that you wish to prepare
+	 */
 	MediaQueue.prototype.prepareAt = function(time) {
 		this.prepare(this.getAtSeconds(time).index);
 	}
 
+	/**
+	 * Insert media at index
+	 * @method insertMedia
+	 * @memberOf MediaQueue#
+	 * @param  {uint} index The media index
+	 * @return {jQuery} the jQuery element
+	 */
 	MediaQueue.prototype.insertMedia = function(index) {
 		var container = this.container;
 		var elem;
@@ -111,6 +149,13 @@ var MediaQueue = (function($) {
 		return elem;
 	}
 
+	/**
+	 * Play the media at index
+	 * @memberOf MediaQueue#
+	 * @method play
+	 * @param  {uint} index The media index
+	 * @return {jQuery}       The jQuery element associated with the medai
+	 */
 	MediaQueue.prototype.play = function(index) {
 		if(index >= this.media.length)
 			index = this.media.length - 1;
@@ -127,6 +172,12 @@ var MediaQueue = (function($) {
 		return elem;
 	}
 
+	/**
+	 * Stop all media and force them to stop buffering
+	 * @memberOf MediaQueue#
+	 * @method stopAll
+	 * @param  {uint} except A single index that you do NOT wish to stop
+	 */
 	MediaQueue.prototype.stopAll = function(except) {
 		this.container.children().not("#"+mediaId+except).children().each(function(_,child) {
 			// In order to stop the download, we have to remove a bunch of stuff and what not
@@ -144,6 +195,11 @@ var MediaQueue = (function($) {
 		});
 	}
 
+	/**
+	 * Pause all media
+	 * @method pauseAll
+	 * @memberOf MediaQueue#
+	 */
 	MediaQueue.prototype.pauseAll = function() {
 		this.container.children().children().each(function(_,child) {
 			child.pause();
@@ -218,6 +274,13 @@ var MediaQueue = (function($) {
 	// ======================= time/duration functions ================== //
 	// ================================================================== //
 
+	/**
+	 * Seek time into the media queue
+	 * @method seek
+	 * @memberOf MediaQueue#
+	 * @param  {uint} time The time to seek to (in seconds)
+	 * @return {boolean}      True if time offset was within the bounds of the queue, false otherwise
+	 */
 	MediaQueue.prototype.seek = function(time) {
 		if (time > this.getTotalDuration() || time < 0)
 			return false;
@@ -236,10 +299,23 @@ var MediaQueue = (function($) {
 		return true;
 	}
 
+	/**
+	 * Get the total duration of the queue
+	 * @method getTotalDuration
+	 * @memberOf MediaQueue#
+	 * @return {uint} The total duration in seconds
+	 */
 	MediaQueue.prototype.getTotalDuration = function() {
 		return this.sumDurations(0, this.media.length - 1);
 	}
 
+	/**
+	 * Get the meda at seconds in the queue
+	 * @method getAtSeconds
+	 * @memberOf MediaQueue#
+	 * @param  {uint} seconds The offset into the queue
+	 * @return {objet}         An object with keys "media" and "index"
+	 */
 	MediaQueue.prototype.getAtSeconds = function(seconds) {
 		if(seconds < 0 || seconds > this.getTotalDuration())
 			return null;
@@ -257,6 +333,8 @@ var MediaQueue = (function($) {
 
 	/**
 	 * Returns the sum of all video durations from index to (including) index
+	 * @method sumDurations
+	 * @memberOf MediaQueue#
 	 * @param  {uint}  from
 	 * @param  {uint}  to (inclusive)
 	 * @return {uint}  sum of all durations in seconds
