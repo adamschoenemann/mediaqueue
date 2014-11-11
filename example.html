@@ -18,7 +18,7 @@
  		var media = [
  			{
  				video: {
- 					url: "some-video",
+ 					src: "some-video",
  					duration: "00:05", // actually 10 seconds, but we'll only need 5
  					extensions: ["mp4", "webm", "ogv"],
  					attrs: {
@@ -34,14 +34,14 @@
  					}
  				},
  				audio: {
- 					url: "audio/some-audio",
+ 					src: "audio/some-audio",
  					duration: "02:11",
  					extensions: ["mp3"]
  				}
  			},
 			{
 				video: {
-					url: "some-intro-video",
+					src: "some-intro-video",
 					duration: "01:10",
 					extensions: ["mp4", "ogv"],
 					handlers: {
@@ -59,63 +59,63 @@
 			},
 			{
 				video: {
-					url: "queue-vid-1",
+					src: "queue-vid-1",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-2",
+					src: "queue-vid-2",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-3",
+					src: "queue-vid-3",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-4",
+					src: "queue-vid-4",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-5",
+					src: "queue-vid-5",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-6",
+					src: "queue-vid-6",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-7",
+					src: "queue-vid-7",
 					duration: "30:00",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "queue-vid-8",
+					src: "queue-vid-8",
 					duration: "20:39",
 					extensions: ["mp4", "ogv"]
 				}
 			},
 			{
 				video: {
-					url: "outro",
+					src: "outro",
 					duration: "00:30",
 					attrs: {
 						loop: true,
@@ -123,11 +123,11 @@
 					extensions: ["mp4", "webm", "ogv"]
 				},
 				audio :{
-					url: "outro-sound",
+					src: "outro-sound",
 					duration: "01:10",
 					extensions: ["mp3"]
 				}
-			},
+			}
 		];
 
 		(function($){
@@ -135,7 +135,7 @@
 
 				var queue = new MediaQueue(media, $("#mq-container"), {
 					media: {
-						baseUrl: "http://localhost/media-dir"
+						baseSrc: "http://localhost/media-dir"
 					},
 					video: {
 						attrs: {
